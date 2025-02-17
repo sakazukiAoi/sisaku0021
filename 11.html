@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>シーレンス & 日本時間変換</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background-color: #222; color: white; }
+        h1 { margin-top: 20px; }
+        label, input, button { margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>シーレンス & 日本時間変換</h1>
+    
+    <h2>日本 → シーレンス</h2>
+    <input type="datetime-local" id="earthTime">
+    <button onclick="convertToSilense()">変換</button>
+    <p id="silenseResult"></p>
+    
+    <h2>シーレンス → 日本</h2>
+    <input type="number" id="silYear" placeholder="年">
+    <input type="number" id="silMonth" placeholder="月 (1-8)">
+    <input type="number" id="silDay" placeholder="日 (1-32)">
+    <input type="number" id="silHour" placeholder="時 (0-28)">
+    <input type="number" id="silMinute" placeholder="分 (0-59)">
+    <input type="number" id="silSecond" placeholder="秒 (0-59)">
+    <button onclick="convertToEarth()">変換</button>
+    <p id="earthResult"></p>
+
+    <script>
+        const baseEarthTime = new Date("2025-02-13T14:10:21Z").getTime();
+        const baseSilense = { year: 2082, month: 6, day: 17, hour: 14, minute: 18, second: 4 };
+        const EARTH_TO_SILENSE_TIME_RATIO = 24 / 29;
+
+        function convertToSilense() {
+            const earthInput = new Date(document.getElementById("earthTime").value);
+            if (isNaN(earthInput)) return;
+            const elapsedEarthSeconds = (earthInput.getTime() - baseEarthTime) / 1000;
+            const elapsedSilenseSeconds = elapsedEarthSeconds * EARTH_TO_SILENSE_TIME_RATIO;
+            let totalSeconds = baseSilense.second + Math.floor(elapsedSilenseSeconds);
+            let totalMinutes = baseSilense.minute + Math.floor(totalSeconds / 60);
+            let totalHours = baseSilense.hour + Math.floor(totalMinutes / 60);
+            let totalDays = baseSilense.day + Math.floor(totalHours / 29);
+            let totalMonths = baseSilense.month + Math.floor(totalDays / 32);
+            let totalYears = baseSilense.year + Math.floor(totalMonths / 8);
+
+            totalSeconds %= 60;
+            totalMinutes %= 60;
+            totalHours %= 29;
+            totalDays = (totalDays % 32) || 32;
+            totalMonths = (totalMonths % 8) || 8;
+            
+            document.getElementById("silenseResult").textContent = `シーレンス時間: ${totalYears}/${totalMonths}/${totalDays} ${totalHours}:${totalMinutes}:${totalSeconds}`;
+        }
+
+        function convertToEarth() {
+            const sYear = parseInt(document.getElementById("silYear").value);
+            const sMonth = parseInt(document.getElementById("silMonth").value);
+            const sDay = parseInt(document.getElementById("silDay").value);
+            const sHour = parseInt(document.getElementById("silHour").value);
+            const sMinute = parseInt(document.getElementById("silMinute").value);
+            const sSecond = parseInt(document.getElementById("silSecond").value);
+            
+            let diffYears = sYear - baseSilense.year;
+            let diffMonths = sMonth - baseSilense.month + diffYears * 8;
+            let diffDays = sDay - baseSilense.day + diffMonths * 32;
+            let diffHours = sHour - baseSilense.hour + diffDays * 29;
+            let diffMinutes = sMinute - baseSilense.minute + diffHours * 60;
+            let diffSeconds = sSecond - baseSilense.second + diffMinutes * 60;
+            
+            let elapsedEarthSeconds = diffSeconds / EARTH_TO_SILENSE_TIME_RATIO;
+            let earthTime = new Date(baseEarthTime + elapsedEarthSeconds * 1000);
+            document.getElementById("earthResult").textContent = `地球時間: ${earthTime.getFullYear()}-${earthTime.getMonth()+1}-${earthTime.getDate()} ${earthTime.getHours()}:${earthTime.getMinutes()}:${earthTime.getSeconds()}`;
+        }
+    </script>
+</body>
+</html>
