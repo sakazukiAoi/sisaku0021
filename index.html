@@ -22,7 +22,7 @@
     <input type="number" id="silYear" placeholder="年">
     <input type="number" id="silMonth" placeholder="月 (1-8)">
     <input type="number" id="silDay" placeholder="日 (1-32)">
-    <input type="number" id="silHour" placeholder="時 (0-28)">
+    <input type="number" id="silHour" placeholder="時 (0-23)">
     <input type="number" id="silMinute" placeholder="分 (0-59)">
     <input type="number" id="silSecond" placeholder="秒 (0-59)">
         <br>
@@ -42,13 +42,13 @@
             let totalSeconds = baseSilense.second + Math.floor(elapsedSilenseSeconds);
             let totalMinutes = baseSilense.minute + Math.floor(totalSeconds / 60);
             let totalHours = baseSilense.hour + Math.floor(totalMinutes / 60);
-            let totalDays = baseSilense.day + Math.floor(totalHours / 29);
+            let totalDays = baseSilense.day + Math.floor(totalHours / 24);
             let totalMonths = baseSilense.month + Math.floor(totalDays / 32);
             let totalYears = baseSilense.year + Math.floor(totalMonths / 8);
 
             totalSeconds %= 60;
             totalMinutes %= 60;
-            totalHours %= 29;
+            totalHours %= 24;
             totalDays = (totalDays % 32) || 32;
             totalMonths = (totalMonths % 8) || 8;
             
@@ -66,7 +66,7 @@
             let diffYears = sYear - baseSilense.year;
             let diffMonths = sMonth - baseSilense.month + diffYears * 8;
             let diffDays = sDay - baseSilense.day + diffMonths * 32;
-            let diffHours = sHour - baseSilense.hour + diffDays * 29;
+            let diffHours = sHour - baseSilense.hour + diffDays * 24;
             let diffMinutes = sMinute - baseSilense.minute + diffHours * 60;
             let diffSeconds = sSecond - baseSilense.second + diffMinutes * 60;
             
