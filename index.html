@@ -43,8 +43,12 @@
             let totalMinutes = baseSilense.minute + Math.floor(totalSeconds / 60);
             let totalHours = baseSilense.hour + Math.floor(totalMinutes / 60);
             let totalDays = baseSilense.day + Math.floor(totalHours / 24);
-            let totalMonths = baseSilense.month + Math.floor(totalDays / 32);
-            let totalYears = baseSilense.year + Math.floor(totalMonths / 8);
+            let addedMonths = Math.floor((totalDays - 1) / 32); // 32日で1ヶ月進む
+            let currentDay = ((totalDays - 1) % 32) + 1;
+            let totalMonths = baseSilense.month + addedMonths;
+            let addedYears = Math.floor((totalMonths - 1) / 8); // 8ヶ月で1年進む
+            let currentMonth = ((totalMonths - 1) % 8) + 1;
+            let currentYear = baseSilense.year + addedYears;
 
             totalSeconds %= 60;
             totalMinutes %= 60;
